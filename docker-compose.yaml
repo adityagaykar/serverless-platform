@@ -1,0 +1,42 @@
+version: "2"
+
+services:
+
+  gateway:
+    build: ./gateway
+    ports:
+      - "7000:80"
+    networks:
+      - frontend    
+    depends_on:
+      - "controller"
+      - "mysql-db"
+
+  controller:
+    build: ./controller
+    ports:
+      - 7001:80
+      - 7002:443
+    networks:
+      - frontend
+      - backend
+    volumes:
+      - $PWD/controller/api:/home/www-data/web2py/applications/api
+      - /var/run/docker.sock:/var/run/docker.sock
+    links:
+      - mysql-db
+    depends_on:
+      - "mysql-db"    
+
+  mysql-db:
+    build: ./mysqldb
+    ports:
+      - "3306:3306"
+    volumes:
+      - /Users/adityagaykar/Documents/serverless-platform-db-data:/var/lib/mysql
+    networks:
+      - backend
+
+networks:
+  frontend:
+  backend:
