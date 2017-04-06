@@ -8,12 +8,11 @@ services:
     networks:
       - frontend    
     depends_on:
-      - frontend
-      - backend
       - "controller"
       - "mysql-db"
     deploy:
-      replicas: 2
+      placement:
+        constraints: [node.role == worker]
 
   controller:
     image: serverlessplatform_controller
@@ -29,11 +28,10 @@ services:
     links:
       - mysql-db
     depends_on:
-      - frontend
-      - backend
-      - "mysql-db"
+      - "mysql-db"    
     deploy:
-      replicas: 3
+      placement:
+        constraints: [node.role == worker]
 
   mysql-db:
     image: "serverlessplatform_mysql-db"
@@ -42,9 +40,6 @@ services:
     volumes:
       - /home/adityagaykar/dev/serverless-platform-db-data:/var/lib/mysql
     networks:
-      - backend
-    depends_on:
-      - frontend
       - backend
     deploy:
       placement:
@@ -61,8 +56,6 @@ services:
       - gateway
       - controller
       - mysql-db
-      - frontend
-      - backend
     deploy:
       placement:
         constraints: [node.role == manager]
