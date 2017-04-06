@@ -17,12 +17,14 @@ services:
     ports:
       - 7001:80
       - 7002:443
+    environment:
+     - PATH=$PATH:/
     networks:
       - frontend
       - backend
     volumes:
-      - $PWD/controller/api:/home/www-data/web2py/applications/api
-      - /var/run/docker.sock:/var/run/docker.sock
+      - $PWD/controller/api:/home/www-data/web2py/applications/api:rw
+      - /var/run/docker.sock:/docker.sock
     links:
       - mysql-db
     depends_on:
@@ -33,7 +35,7 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - /Users/adityagaykar/Documents/serverless-platform-db-data:/var/lib/mysql
+      - /home/adityagaykar/Dev/serverless-platform-db-data:/var/lib/mysql:rw
     networks:
       - backend
 
