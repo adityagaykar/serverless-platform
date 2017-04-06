@@ -1,8 +1,8 @@
-version: 3
+version: "3"
 
 services:
- gateway:
-    build: ./gateway
+  gateway:
+    image: serverlessplatform_gateway
     ports:
       - "7000:80"
     networks:
@@ -12,10 +12,10 @@ services:
       - "mysql-db"
     deploy:
       placement:
-        constraints: [node.role == manager]
+        constraints: [node.role == worker]
 
   controller:
-    build: ./controller
+    image: serverlessplatform_controller
     ports:
       - 7001:80
       - 7002:443
@@ -24,23 +24,38 @@ services:
       - backend
     volumes:
       - $PWD/controller/api:/home/www-data/web2py/applications/api:rw
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/run/docker.sock:/var/run/docker.sock
     links:
       - mysql-db
     depends_on:
       - "mysql-db"    
     deploy:
       placement:
-        constraints: [node.role == manager]
+        constraints: [node.role == worker]
 
   mysql-db:
-    build: ./mysqldb
+    image: "serverlessplatform_mysql-db"
     ports:
       - "3306:3306"
     volumes:
       - /home/adityagaykar/dev/serverless-platform-db-data:/var/lib/mysql
     networks:
       - backend
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+
+  visualizer:
+    image: dockersamples/visualizer:stable
+    ports:
+      - "8080:8080"
+    stop_grace_period: 1m30s
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    depends_on:
+      - gateway
+      - controller
+      - mysql-db
     deploy:
       placement:
         constraints: [node.role == manager]
