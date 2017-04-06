@@ -21,6 +21,10 @@ def index():
     return dict(message=T('Welcome to web2py!'))
 
 
+def dashboard():
+    services = SQLFORM.smartgrid(db.service,user_signature=False, create=False)#db(db.service).select()
+    return locals()
+
 def user():
     """
     exposes:
