@@ -35,7 +35,7 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - /home/adityagaykar/Dev/serverless-platform-db-data:/var/lib/mysql:rw
+      - /home/adityagaykar/dev/serverless-platform-db-data:/var/lib/mysql:rw
     networks:
       - backend
 
