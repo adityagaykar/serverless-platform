@@ -1,6 +1,17 @@
 version: "2"
 
 services:
+  classifier:
+    build: ./classifier
+    ports:
+      - "8000:8000"
+      - "8001:443"
+    networks:
+      - frontend  
+      - backend  
+    depends_on:
+      - "controller"
+      - "mysql-db"
 
   gateway:
     build: ./gateway

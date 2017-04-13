@@ -24,15 +24,15 @@ def invoke():
     # result = api_handler.handle_invoke(request)
     req_vars = request.vars
     token = req_vars["access_token"]
+    message = req_vars["message"]
     result = "Error"
-    if token != None:
+    if token != None and message != None:
         row = db(db.service.token == token).select().first()
         service_name = row["name"]
         config = json.loads(row["config"])
         image = config["image"]
         command = config["command"]
-
-        
+        command += "\""+message+"\""
         # container = client.api.create_container(image=image, command=command)
         # result = dockerpty.start(client, container)
         try:
@@ -40,4 +40,5 @@ def invoke():
             result = client.containers.run(image,command)
         except Exception as e:
             result = image + " " + command + str(e)
+    response.headers["charset"]="iso-8859-1"	
     return response.json(result)    

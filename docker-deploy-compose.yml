@@ -1,6 +1,24 @@
 version: "3"
 
 services:
+  classifier:
+    image: serverlessplatform_classifier
+    ports:
+      - "8000:8000"
+      - "8001:443"
+    networks:
+      - frontend  
+      - backend  
+    depends_on:
+      - frontend
+      - backend
+      - "gateway"
+      - "controller"
+      - "mysql-db"
+    deploy:
+      replicas: 2
+
+
   gateway:
     image: serverlessplatform_gateway
     ports:
